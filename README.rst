@@ -26,7 +26,10 @@ This is easily achieved by downloading
 Usage Example
 =============
 
-This plays Frosty the Snowman::
+This plays Frosty the Snowman:
+
+.. code-block: python
+
     import board
     import adafruit_rtttl
 
