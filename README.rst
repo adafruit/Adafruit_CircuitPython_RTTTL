@@ -28,7 +28,7 @@ Usage Example
 
 This plays Frosty the Snowman:
 
-.. code-block: python
+.. code-block:: python
 
     import board
     import adafruit_rtttl
