@@ -23,16 +23,16 @@
 `adafruit_rtttl`
 ====================================================
 
-TODO(description)
+Play notes to a digialio pin using ring tone text transfer language (rtttl).
 
 * Author(s): Scott Shawcroft
 """
 
+import time
 from adafruit_waveform import sine
 import audioio
-import time
 
-piano = {"4a#": 466.16,
+PIANO = {"4a#": 466.16,
          "4b" : 493.88,
          "5c" : 523.25,
          "5c#": 554.37,
@@ -61,7 +61,65 @@ piano = {"4a#": 466.16,
          "7c" : 2093,
          "7c#": 2217.5}
 
+def _get_wave(tune, octave):
+    """Returns the proper wave to play the song
+    """
+    min_freq = 13000
+
+    for note in tune.split(","):
+        piano_note = None
+        if note[0].isdigit():
+            piano_note = note[1]
+        else:
+            piano_note = note[0]
+        if "#" in note:
+            piano_note += "#"
+        note_octave = octave
+        if note[-1].isdigit():
+            note_octave = note[-1]
+        piano_note = note_octave + piano_note
+        if piano_note[-1] != "p" and PIANO[piano_note] < min_freq:
+            min_freq = PIANO[piano_note]
+    return sine.sine_wave(16000, min_freq), min_freq
+
+
+#pylint: disable-msg=too-many-arguments
+def _play_to_pin(tune, base_tone, min_freq, duration, octave, tempo):
+    """Using the prepare input send the notes to the pin
+    """
+    for note in tune.split(","):
+        piano_note = None
+        note_duration = duration
+        if note[0].isdigit():
+            note_duration = int(note[0])
+            piano_note = note[1]
+        else:
+            piano_note = note[0]
+        if "." in note:
+            note_duration *= 1.5
+        if "#" in note:
+            piano_note += "#"
+        note_octave = octave
+        if note[-1].isdigit():
+            note_octave = note[-1]
+        piano_note = note_octave + piano_note
+        if piano_note in PIANO:
+            base_tone.frequency = int(16000 * (PIANO[piano_note] / min_freq))
+            base_tone.play(loop=True)
+        print(piano_note, note_duration)
+        time.sleep(4 / note_duration * 60 / tempo)
+        base_tone.stop()
+        time.sleep(0.02)
+
+#pylint: disable-msg=too-many-arguments
 def play(pin, rtttl, octave=None, duration=None, tempo=None):
+    """Play notes to a digialio pin using ring tone text transfer language (rtttl).
+    :param ~digitalio.DigitalInOut pin: the speaker pin
+    :param rtttl: string containing rtttl
+    :param int octave: represents octave number (default 6 starts at middle c)
+    :param int duration: length of notes (default 4 quarter note)
+    :param int tempo: how fast (default 63 beats per minute)
+    """
     _, defaults, tune = rtttl.split(":")
     for default in defaults.split(","):
         if default[0] == "d" and not duration:
@@ -76,46 +134,11 @@ def play(pin, rtttl, octave=None, duration=None, tempo=None):
         duration = 4
     if not tempo:
         tempo = 63
+
     print("tempo", tempo, "octave", octave, "duration", duration)
 
-    min_freq = 13000
+    wave, min_freq = _get_wave(tune, octave)
 
-    for note in tune.split(","):
-        p = None
-        if note[0].isdigit():
-            p = note[1]
-        else:
-            p = note[0]
-        if "#" in note:
-            p += "#"
-        o = octave
-        if note[-1].isdigit():
-            o = note[-1]
-        p = o + p
-        if p[-1] != "p" and piano[p] < min_freq:
-            min_freq = piano[p]
-    wave = sine.sine_wave(16000, min_freq)
     base_tone = audioio.AudioOut(pin, wave)
-    for note in tune.split(","):
-        p = None
-        d = duration
-        if note[0].isdigit():
-            d = int(note[0])
-            p = note[1]
-        else:
-            p = note[0]
-        if "." in note:
-            d *= 1.5
-        if "#" in note:
-            p += "#"
-        o = octave
-        if note[-1].isdigit():
-            o = note[-1]
-        p = o + p
-        if p in piano:
-            base_tone.frequency = int(16000 * (piano[p] / min_freq))
-            base_tone.play(loop=True)
-        print(p, d)
-        time.sleep(4 / d * 60 / tempo)
-        base_tone.stop()
-        time.sleep(0.02)
+
+    _play_to_pin(tune, base_tone, min_freq, duration, octave, tempo)
