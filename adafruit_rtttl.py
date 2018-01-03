@@ -29,6 +29,7 @@ TODO(description)
 """
 
 from adafruit_waveform import sine
+import simpleio
 import audioio
 import time
 
@@ -60,6 +61,8 @@ piano = {"4a#": 466.16,
          "6b" : 1975.5,
          "7c" : 2093,
          "7c#": 2217.5}
+
+def
 
 def play(pin, rtttl, octave=None, duration=None, tempo=None):
     _, defaults, tune = rtttl.split(":")
@@ -95,7 +98,11 @@ def play(pin, rtttl, octave=None, duration=None, tempo=None):
         if p[-1] != "p" and piano[p] < min_freq:
             min_freq = piano[p]
     wave = sine.sine_wave(16000, min_freq)
-    base_tone = audioio.AudioOut(pin, wave)
+
+    try:
+        base_tone = audioio.AudioOut(pin, wave)
+    except(ValueError):
+        continue
     for note in tune.split(","):
         p = None
         d = duration
@@ -113,9 +120,16 @@ def play(pin, rtttl, octave=None, duration=None, tempo=None):
             o = note[-1]
         p = o + p
         if p in piano:
-            base_tone.frequency = int(16000 * (piano[p] / min_freq))
-            base_tone.play(loop=True)
+            try:
+                base_tone.frequency = int(16000 * (piano[p] / min_freq))
+                base_tone.play(loop=True)
+            except(ValueError):
+                base_tone_frequency = int(1600 * (piano[p] / min_freq))
+                base_tone = simpleio.tone(pin, base_tone_frequency, 1)
         print(p, d)
         time.sleep(4 / d * 60 / tempo)
-        base_tone.stop()
+        try:
+            base_tone.stop()
+        except(ValueError):
+            continue
         time.sleep(0.02)
