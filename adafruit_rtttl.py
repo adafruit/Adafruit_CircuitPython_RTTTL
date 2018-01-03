@@ -28,6 +28,9 @@ Play notes to a digialio pin using ring tone text transfer language (rtttl).
 * Author(s): Scott Shawcroft
 """
 
+__version__ = "0.0.0-auto.0"
+__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_RTTTL"
+
 import time
 from adafruit_waveform import sine
 import audioio
@@ -62,7 +65,8 @@ PIANO = {"4a#": 466.16,
          "7c#": 2217.5}
 
 def _get_wave(tune, octave):
-    """Returns the proper wave to play the song
+    """Returns the proper waveform to play the song along with the minimum
+    frequency in the song.
     """
     min_freq = 13000
 
@@ -85,7 +89,7 @@ def _get_wave(tune, octave):
 
 #pylint: disable-msg=too-many-arguments
 def _play_to_pin(tune, base_tone, min_freq, duration, octave, tempo):
-    """Using the prepare input send the notes to the pin
+    """Using the prepared input send the notes to the pin
     """
     for note in tune.split(","):
         piano_note = None
