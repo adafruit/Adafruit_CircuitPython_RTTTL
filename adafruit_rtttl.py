@@ -29,6 +29,7 @@ TODO(description)
 """
 
 from adafruit_waveform import sine
+import simpleio
 import audioio
 import time
 
@@ -95,27 +96,52 @@ def play(pin, rtttl, octave=None, duration=None, tempo=None):
         if p[-1] != "p" and piano[p] < min_freq:
             min_freq = piano[p]
     wave = sine.sine_wave(16000, min_freq)
-    base_tone = audioio.AudioOut(pin, wave)
-    for note in tune.split(","):
-        p = None
-        d = duration
-        if note[0].isdigit():
-            d = int(note[0])
-            p = note[1]
-        else:
-            p = note[0]
-        if "." in note:
-            d *= 1.5
-        if "#" in note:
-            p += "#"
-        o = octave
-        if note[-1].isdigit():
-            o = note[-1]
-        p = o + p
-        if p in piano:
-            base_tone.frequency = int(16000 * (piano[p] / min_freq))
-            base_tone.play(loop=True)
-        print(p, d)
-        time.sleep(4 / d * 60 / tempo)
-        base_tone.stop()
-        time.sleep(0.02)
+    try:
+        base_tone = audioio.AudioOut(pin, wave)
+        for note in tune.split(","):
+            p = None
+            d = duration
+            if note[0].isdigit():
+                d = int(note[0])
+                p = note[1]
+            else:
+                p = note[0]
+            if "." in note:
+                d *= 1.5
+            if "#" in note:
+                p += "#"
+            o = octave
+            if note[-1].isdigit():
+                o = note[-1]
+            p = o + p
+            if p in piano:
+                base_tone.frequency = int(16000 * (piano[p] / min_freq))
+                base_tone.play(loop=True)
+            print(p, d)
+            time.sleep(4 / d * 60 / tempo)
+            base_tone.stop()
+            time.sleep(0.02)
+    except(ValueError):
+        for note in tune.split(","):
+            p = None
+            d = duration
+            if note[0].isdigit():
+                d = int(note[0])
+                p = note[1]
+            else:
+                p = note[0]
+            if "." in note:
+                d *= 1.5
+            if "#" in note:
+                p += "#"
+            o = octave
+            if note[-1].isdigit():
+                o = note[-1]
+            p = o + p
+            if p in piano:
+                base_tone_frequency = int(1600 * (piano[p] / min_freq))
+                base_tone = simpleio.tone(pin, base_tone_frequency, 1)
+            print(p, d)
+            time.sleep(4 / d * 60 / tempo)
+            base_tone_frequency = 20000
+            time.sleep(0.02)
