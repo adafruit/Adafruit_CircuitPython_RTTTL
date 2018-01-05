@@ -29,5 +29,8 @@ import board
 enable = digitalio.DigitalInOut(board.SPEAKER_ENABLE)
 enable.switch_to_output(value=True)
 
-adafruit_rtttl.play(board.SPEAKER, "itchy:d=8,o=6,b=160:c,a5,4p,c,a,4p,c,a5,c,a5,c,a,4p,p,c,d,e,p,e,f,g,4p,d,c,4d,f,4a#,4a,2c7")
-adafruit_rtttl.play(board.SPEAKER, "Phantom:d=4,o=5,b=140:c,f,c,d#.,8c#,2c#,a#4,d#,8a#4,2c,c,f,c,d#.,8c#,2c#,a#4,d#.,8a#4,2c,p,c,f,g#,c.6,8a#,2a#,a#,d#.6,8a#,2c6,p,c6,2f.6,8d#6,8c#6,8c6,8a#,8g#,8g,8f,2e,c#,c#.,8c,2c")
+adafruit_rtttl.play(board.SPEAKER, "itchy:d=8,o=6,b=160:c,a5,4p,c,a,4p,c,a5,c,a5," + \
+    "c,a,4p,p,c,d,e,p,e,f,g,4p,d,c,4d,f,4a#,4a,2c7")
+adafruit_rtttl.play(board.SPEAKER, "Phantom:d=4,o=5,b=140:c,f,c,d#.,8c#,2c#,a#4," + \
+    "d#,8a#4,2c,c,f,c,d#.,8c#,2c#,a#4,d#.,8a#4,2c,p,c,f,g#,c.6,8a#,2a#,a#,d#.6,8a#," + \
+    "2c6,p,c6,2f.6,8d#6,8c#6,8c6,8a#,8g#,8g,8f,2e,c#,c#.,8c,2c")
