@@ -1,6 +1,6 @@
 # The MIT License (MIT)
 #
-# Copyright (c) 2017 Scott Shawcroft for Adafruit Industries
+# Copyright (c) 2017, 2018 Scott Shawcroft for Adafruit Industries
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
 # of this software and associated documentation files (the "Software"), to deal
@@ -130,7 +130,7 @@ def _play_to_pin(tune, base_tone, min_freq, duration, octave, tempo):
             else:
                 base_tone.frequency = int(16000 * (PIANO[piano_note] / min_freq))
                 base_tone.play(loop=True)
-        print(piano_note, note_duration)
+
         time.sleep(4 / note_duration * 60 / tempo)
         if pwm:
             base_tone.duty_cycle = 0
@@ -162,8 +162,6 @@ def play(pin, rtttl, octave=None, duration=None, tempo=None):
     if not tempo:
         tempo = 63
 
-    print("tempo", tempo, "octave", octave, "duration", duration)
-
     base_tone = None
     min_freq = 440
     if AUDIOIO_AVAILABLE:
@@ -179,3 +177,5 @@ def play(pin, rtttl, octave=None, duration=None, tempo=None):
         base_tone = pulseio.PWMOut(pin, duty_cycle=0, variable_frequency=True)
 
     _play_to_pin(tune, base_tone, min_freq, duration, octave, tempo)
+
+    base_tone.deinit()
