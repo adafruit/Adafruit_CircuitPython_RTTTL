@@ -39,6 +39,22 @@ This plays Frosty the Snowman:
 
     adafruit_rtttl.play(board.A0, "Snowman:d=8,o=5,b=200:2g,4e.,f,4g,2c6,b,c6,4d6,4c6,4b,a,2g.,b,c6,4d6,4c6,4b,a,a,g,4c6,4e.,g,a,4g,4f,4e,4d,2c.,4c,4a,4a,4c6,4c6,4b,4a,4g,4e,4f,4a,4g,4f,2e.,4e,4d,4d,4g,4g,4b,4b,4d6,d6,b,4d6,4c6,4b,4a,4g,4p,2g")
 
+CPX Usage Example
+=============
+
+This plays Frosty the Snowman on a Circuit Playground Express (we must enable onboard speaker):
+
+.. code-block:: python
+
+    import board
+    from digitalio import DigitalInOut, Direction
+    import adafruit_rtttl
+    spkrenable = DigitalInOut(board.SPEAKER_ENABLE)
+    spkrenable.direction = Direction.OUTPUT
+    spkrenable.value = True
+
+    adafruit_rtttl.play(board.A0, "Snowman:d=8,o=5,b=200:2g,4e.,f,4g,2c6,b,c6,4d6,4c6,4b,a,2g.,b,c6,4d6,4c6,4b,a,a,g,4c6,4e.,g,a,4g,4f,4e,4d,2c.,4c,4a,4a,4c6,4c6,4b,4a,4g,4e,4f,4a,4g,4f,2e.,4e,4d,4d,4g,4g,4b,4b,4d6,d6,b,4d6,4c6,4b,4a,4g,4p,2g")
+
 Contributing
 ============
 
