@@ -31,6 +31,7 @@ Play notes to a digialio pin using ring tone text transfer language (rtttl).
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_RTTTL"
 
+import sys
 import time
 import pulseio
 
@@ -128,8 +129,16 @@ def _play_to_pin(tune, base_tone, min_freq, duration, octave, tempo):
                 base_tone.frequency = int(PIANO[piano_note])
                 base_tone.duty_cycle = 2 ** 15
             else:
-                base_tone.frequency = int(16000 * (PIANO[piano_note] / min_freq))
-                base_tone.play(loop=True)
+                # AudioOut interface changed in CP 3.x
+                if sys.implementation.version[0] >= 3:
+                    pitch = int(PIANO[piano_note])
+                    sine_wave = sine.sine_wave(16000, pitch)
+                    sine_wave_sample = audioio.RawSample(sine_wave)
+                    base_tone.play(sine_wave_sample, loop=True)
+                else:
+                    base_tone.frequency = int(
+                        16000 * (PIANO[piano_note] / min_freq))
+                    base_tone.play(loop=True)
 
         time.sleep(4 / note_duration * 60 / tempo)
         if pwm:
@@ -167,7 +176,12 @@ def play(pin, rtttl, octave=None, duration=None, tempo=None):
     if AUDIOIO_AVAILABLE:
         wave, min_freq = _get_wave(tune, octave)
         try:
-            base_tone = audioio.AudioOut(pin, wave)
+            # AudioOut interface changed in CP 3.x; a waveform if now pass
+            # directly to .play(), generated for each note in _play_to_pin()
+            if sys.implementation.version[0] >= 3:
+                base_tone = audioio.AudioOut(pin)
+            else:
+                base_tone = audioio.AudioOut(pin, wave)
         except ValueError:
             # No DAC on the pin so use PWM.
             pass
