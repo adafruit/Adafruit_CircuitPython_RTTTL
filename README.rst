@@ -10,8 +10,8 @@ Introduction
     :target: https://discord.gg/nBQh6qu
     :alt: Discord
 
-.. image:: https://travis-ci.org/adafruit/Adafruit_CircuitPython_RTTTL.svg?branch=master
-    :target: https://travis-ci.org/adafruit/Adafruit_CircuitPython_RTTTL
+.. image:: https://travis-ci.com/adafruit/Adafruit_CircuitPython_RTTTL.svg?branch=master
+    :target: https://travis-ci.com/adafruit/Adafruit_CircuitPython_RTTTL
     :alt: Build Status
 
 This plays `RTTTL <https://en.wikipedia.org/wiki/Ring_Tone_Transfer_Language>`_ melodies.
