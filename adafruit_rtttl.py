@@ -40,6 +40,10 @@ try:
     import audioio
     from adafruit_waveform import sine
     AUDIOIO_AVAILABLE = True
+    try:
+        import audiocore
+    except ImportError:
+        audiocore = audioio
 except ImportError:
     pass
 
@@ -133,7 +137,7 @@ def _play_to_pin(tune, base_tone, min_freq, duration, octave, tempo):
                 if sys.implementation.version[0] >= 3:
                     pitch = int(PIANO[piano_note])
                     sine_wave = sine.sine_wave(16000, pitch)
-                    sine_wave_sample = audioio.RawSample(sine_wave)
+                    sine_wave_sample = audiocore.RawSample(sine_wave)
                     base_tone.play(sine_wave_sample, loop=True)
                 else:
                     base_tone.frequency = int(
