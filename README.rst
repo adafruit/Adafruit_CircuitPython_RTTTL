@@ -36,13 +36,13 @@ PyPI <https://pypi.org/project/adafruit-circuitpython-rtttl/>`_. To install for 
 .. code-block:: shell
 
     pip3 install adafruit-circuitpython-rtttl
-    
+
 To install system-wide (this may be required in some cases):
 
 .. code-block:: shell
 
     sudo pip3 install adafruit-circuitpython-rtttl
-    
+
 To install in a virtual environment in your current project:
 
 .. code-block:: shell
@@ -51,7 +51,7 @@ To install in a virtual environment in your current project:
     python3 -m venv .env
     source .env/bin/activate
     pip3 install adafruit-circuitpython-rtttl
-    
+
 Usage Example
 =============
 
