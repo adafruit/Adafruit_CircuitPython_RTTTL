@@ -16,7 +16,7 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_RTTTL"
 
 import sys
 import time
-import pulseio
+import pwmio
 
 AUDIOIO_AVAILABLE = False
 try:
@@ -112,7 +112,7 @@ def _get_wave(tune, octave):
 # pylint: disable-msg=too-many-arguments
 def _play_to_pin(tune, base_tone, min_freq, duration, octave, tempo):
     """Using the prepared input send the notes to the pin"""
-    pwm = isinstance(base_tone, pulseio.PWMOut)
+    pwm = isinstance(base_tone, pwmio.PWMOut)
     for note in tune.split(","):
         piano_note, note_duration = _parse_note(note, duration, octave)
         if piano_note in PIANO:
@@ -179,7 +179,7 @@ def play(pin, rtttl, octave=None, duration=None, tempo=None):
 
     # Fall back to PWM
     if not base_tone:
-        base_tone = pulseio.PWMOut(pin, duty_cycle=0, variable_frequency=True)
+        base_tone = pwmio.PWMOut(pin, duty_cycle=0, variable_frequency=True)
 
     _play_to_pin(tune, base_tone, min_freq, duration, octave, tempo)
 
