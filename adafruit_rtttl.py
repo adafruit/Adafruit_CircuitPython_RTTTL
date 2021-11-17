@@ -31,6 +31,12 @@ try:
 except ImportError:
     pass
 
+try:
+    from typing import Optional, Union, Tuple, List
+    from audioio import AudioOut
+except ImportError:
+    pass
+
 PIANO = {
     "4c": 261.626,
     "4c#": 277.183,
@@ -73,7 +79,7 @@ PIANO = {
 }
 
 
-def _parse_note(note, duration=2, octave="6"):
+def _parse_note(note: str, duration: int = 2, octave: int = 6) -> Tuple[str, float]:
     note = note.strip()
     piano_note = None
     note_duration = duration
@@ -89,14 +95,14 @@ def _parse_note(note, duration=2, octave="6"):
         note_duration *= 1.5
     if "#" in note:
         piano_note += "#"
-    note_octave = octave
+    note_octave = str(octave)
     if note[-1].isdigit():
         note_octave = note[-1]
     piano_note = note_octave + piano_note
     return piano_note, note_duration
 
 
-def _get_wave(tune, octave):
+def _get_wave(tune: str, octave: int) -> Tuple[List[int], float]:
     """Returns the proper waveform to play the song along with the minimum
     frequency in the song.
     """
@@ -110,7 +116,14 @@ def _get_wave(tune, octave):
 
 
 # pylint: disable-msg=too-many-arguments
-def _play_to_pin(tune, base_tone, min_freq, duration, octave, tempo):
+def _play_to_pin(
+    tune: str,
+    base_tone: Union[pwmio.PWMOut, AudioOut],
+    min_freq: float,
+    duration: int,
+    octave: int,
+    tempo: int,
+) -> None:
     """Using the prepared input send the notes to the pin"""
     pwm = isinstance(base_tone, pwmio.PWMOut)
     for note in tune.split(","):
@@ -139,10 +152,16 @@ def _play_to_pin(tune, base_tone, min_freq, duration, octave, tempo):
 
 
 # pylint: disable-msg=too-many-arguments
-def play(pin, rtttl, octave=None, duration=None, tempo=None):
+def play(
+    pin,
+    rtttl: str,
+    octave: int = Optional[None],
+    duration: Optional[int] = None,
+    tempo: Optional[int] = None,
+) -> None:
     """Play notes to a digialio pin using ring tone text transfer language (rtttl).
     :param ~digitalio.DigitalInOut pin: the speaker pin
-    :param rtttl: string containing rtttl
+    :param str rtttl: string containing rtttl
     :param int octave: represents octave number (default 6 starts at middle c)
     :param int duration: length of notes (default 4 quarter note)
     :param int tempo: how fast (default 63 beats per minute)
