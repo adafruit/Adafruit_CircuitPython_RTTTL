@@ -32,7 +32,7 @@ except ImportError:
     pass
 
 try:
-    from typing import Optional, Union, Tuple
+    from typing import Optional, Union, Tuple, List
     from audioio import AudioOut
 except ImportError:
     pass
@@ -102,7 +102,7 @@ def _parse_note(note: str, duration: int = 2, octave: int = 6) -> Tuple[str, flo
     return piano_note, note_duration
 
 
-def _get_wave(tune: str, octave: int) -> Tuple[sine.sine_wave, float]:
+def _get_wave(tune: str, octave: int) -> Tuple[List[int], float]:
     """Returns the proper waveform to play the song along with the minimum
     frequency in the song.
     """
