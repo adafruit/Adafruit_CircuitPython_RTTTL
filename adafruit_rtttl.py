@@ -95,7 +95,7 @@ def _parse_note(note: str, duration: int = 2, octave: int = 6) -> Tuple[str, flo
         note_duration *= 1.5
     if "#" in note:
         piano_note += "#"
-    note_octave = octave
+    note_octave = str(octave)
     if note[-1].isdigit():
         note_octave = note[-1]
     piano_note = note_octave + piano_note
