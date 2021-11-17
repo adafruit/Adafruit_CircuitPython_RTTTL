@@ -148,7 +148,7 @@ def _play_to_pin(tune: str, base_tone: Union[pwmio.PWMOut, AudioOut], min_freq: 
 def play(pin, rtttl: str, octave: int = Optional[None], duration: Optional[int] = None, tempo: Optional[int] = None) -> None:
     """Play notes to a digialio pin using ring tone text transfer language (rtttl).
     :param ~digitalio.DigitalInOut pin: the speaker pin
-    :param rtttl: string containing rtttl
+    :param str rtttl: string containing rtttl
     :param int octave: represents octave number (default 6 starts at middle c)
     :param int duration: length of notes (default 4 quarter note)
     :param int tempo: how fast (default 63 beats per minute)
