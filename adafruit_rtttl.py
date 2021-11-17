@@ -116,7 +116,14 @@ def _get_wave(tune: str, octave: int) -> Tuple[sine.sine_wave, float]:
 
 
 # pylint: disable-msg=too-many-arguments
-def _play_to_pin(tune: str, base_tone: Union[pwmio.PWMOut, AudioOut], min_freq: float, duration: int, octave: int, tempo: int) -> None:
+def _play_to_pin(
+    tune: str,
+    base_tone: Union[pwmio.PWMOut, AudioOut],
+    min_freq: float,
+    duration: int,
+    octave: int,
+    tempo: int,
+) -> None:
     """Using the prepared input send the notes to the pin"""
     pwm = isinstance(base_tone, pwmio.PWMOut)
     for note in tune.split(","):
@@ -145,7 +152,13 @@ def _play_to_pin(tune: str, base_tone: Union[pwmio.PWMOut, AudioOut], min_freq: 
 
 
 # pylint: disable-msg=too-many-arguments
-def play(pin, rtttl: str, octave: int = Optional[None], duration: Optional[int] = None, tempo: Optional[int] = None) -> None:
+def play(
+    pin,
+    rtttl: str,
+    octave: int = Optional[None],
+    duration: Optional[int] = None,
+    tempo: Optional[int] = None,
+) -> None:
     """Play notes to a digialio pin using ring tone text transfer language (rtttl).
     :param ~digitalio.DigitalInOut pin: the speaker pin
     :param str rtttl: string containing rtttl
