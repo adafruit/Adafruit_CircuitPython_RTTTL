@@ -20,7 +20,7 @@ extensions = [
     "sphinx.ext.viewcode",
 ]
 
-autodoc_mock_imports = ["pulseio"]
+autodoc_mock_imports = ["pulseio", "pwmio"]
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3.4", None),
