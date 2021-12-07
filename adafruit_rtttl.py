@@ -155,7 +155,7 @@ def _play_to_pin(
 def play(
     pin,
     rtttl: str,
-    octave: int = Optional[None],
+    octave: Optional[int] = None,
     duration: Optional[int] = None,
     tempo: Optional[int] = None,
 ) -> None:
