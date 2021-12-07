@@ -23,6 +23,7 @@ HAVE_WAVEFORM_LIBRARY = False
 try:
     import audioio
     from adafruit_waveform import sine
+
     HAVE_WAVEFORM_LIBRARY = True
 
     AUDIOIO_AVAILABLE = True
@@ -33,7 +34,6 @@ try:
 except ImportError as e:
     if not HAVE_WAVEFORM_LIBRARY:
         print("Have audioio module but missing adafruit_waveform library")
-
 
 try:
     from typing import Optional, Union, Tuple, List
