@@ -20,7 +20,7 @@ extensions = [
     "sphinx.ext.viewcode",
 ]
 
-autodoc_mock_imports = ["pulseio", "pwmio", "audioio"]
+autodoc_mock_imports = ["pulseio", "pwmio", "audioio", "adafruit_waveform"]
 
 intersphinx_mapping = {
     "python": ("https://docs.python.org/3.4", None),
