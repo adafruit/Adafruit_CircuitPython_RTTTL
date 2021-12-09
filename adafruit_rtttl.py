@@ -22,8 +22,10 @@ AUDIOIO_AVAILABLE = False
 WAVEFORM_AVAILABLE = False
 try:
     import audioio
+
     AUDIOIO_AVAILABLE = True
     from adafruit_waveform import sine
+
     WAVEFORM_AVAILABLE = True
     try:
         import audiocore
