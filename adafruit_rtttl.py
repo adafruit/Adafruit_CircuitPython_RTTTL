@@ -19,17 +19,21 @@ import time
 import pwmio
 
 AUDIOIO_AVAILABLE = False
+WAVEFORM_AVAILABLE = False
 try:
     import audioio
-    from adafruit_waveform import sine
 
     AUDIOIO_AVAILABLE = True
+    from adafruit_waveform import sine
+
+    WAVEFORM_AVAILABLE = True
     try:
         import audiocore
     except ImportError:
         audiocore = audioio
-except ImportError:
-    pass
+except ImportError as e:
+    if not WAVEFORM_AVAILABLE:
+        raise e
 
 try:
     from typing import Optional, Union, Tuple, List
