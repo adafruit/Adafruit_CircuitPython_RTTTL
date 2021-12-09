@@ -33,7 +33,7 @@ try:
         audiocore = audioio
 except ImportError as e:
     if not HAVE_WAVEFORM_LIBRARY:
-        raise(e)
+        raise e
 
 try:
     from typing import Optional, Union, Tuple, List
