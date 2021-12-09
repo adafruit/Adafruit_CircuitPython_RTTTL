@@ -33,7 +33,7 @@ try:
         audiocore = audioio
 except ImportError as e:
     if not HAVE_WAVEFORM_LIBRARY:
-        print("Have audioio module but missing adafruit_waveform library")
+        raise(e)
 
 try:
     from typing import Optional, Union, Tuple, List
