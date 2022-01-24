@@ -3,7 +3,7 @@ Introduction
 ============
 
 .. image:: https://readthedocs.org/projects/adafruit-circuitpython-rtttl/badge/?version=latest
-    :target: https://circuitpython.readthedocs.io/projects/rtttl/en/latest/
+    :target: https://docs.circuitpython.org/projects/rtttl/en/latest/
     :alt: Documentation Status
 
 .. image :: https://img.shields.io/discord/327254708534116352.svg
@@ -83,7 +83,7 @@ This plays Frosty the Snowman on a Circuit Playground Express (we must enable on
 Documentation
 =============
 
-API documentation for this library can be found on `Read the Docs <https://circuitpython.readthedocs.io/projects/rtttl/en/latest/>`_.
+API documentation for this library can be found on `Read the Docs <https://docs.circuitpython.org/projects/rtttl/en/latest/>`_.
 
 Contributing
 ============
