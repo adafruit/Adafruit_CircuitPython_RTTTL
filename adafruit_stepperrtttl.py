@@ -17,70 +17,73 @@ __repo__ = "https://github.com/tekktrik/Adafruit_CircuitPython_StepperRTTTL"
 import sys
 import time
 import pwmio
-
-AUDIOIO_AVAILABLE = False
-WAVEFORM_AVAILABLE = False
-try:
-    import audioio
-
-    AUDIOIO_AVAILABLE = True
-    from adafruit_waveform import sine
-
-    WAVEFORM_AVAILABLE = True
-    try:
-        import audiocore
-    except ImportError:
-        audiocore = audioio
-except ImportError as e:
-    if not WAVEFORM_AVAILABLE:
-        raise e
+import gc
 
 try:
-    from typing import Optional, Union, Tuple, List
-    from audioio import AudioOut
+    from typing import Optional, Tuple
+    import tic_driver.motor.cpy
+    from tic_driver.constants import StepMode
 except ImportError:
     pass
 
-PIANO = {
-    "4c": 261.626,
-    "4c#": 277.183,
-    "4d": 293.665,
-    "4d#": 311.127,
-    "4e": 329.628,
-    "4f": 349.228,
-    "4f#": 369.994,
-    "4g": 391.995,
-    "4g#": 415.305,
-    "4a": 440,
-    "4a#": 466.164,
-    "4b": 493.883,
-    "5c": 523.251,
-    "5c#": 554.365,
-    "5d": 587.330,
-    "5d#": 622.254,
-    "5e": 659.255,
-    "5f": 698.456,
-    "5f#": 739.989,
-    "5g": 783.991,
-    "5g#": 830.609,
-    "5a": 880,
-    "5a#": 932.328,
-    "5b": 987.767,
-    "6c": 1046.50,
-    "6c#": 1108.73,
-    "6d": 1174.66,
-    "6d#": 1244.51,
-    "6e": 1318.51,
-    "6f": 1396.91,
-    "6f#": 1479.98,
-    "6g": 1567.98,
-    "6g#": 1661.22,
-    "6a": 1760,
-    "6a#": 1864.66,
-    "6b": 1975.53,
-    "7c": 2093,
-    "7c#": 2217.46,
-}
+C3_NOTE = 33.37
+C4_NOTE = 66.74
+C5_NOTE = 133.48
+C6_NOTE = 266.96
+
+HALF_STEP_FACTOR = 1.059463
+
+PIANO = {}
+NOTES_LIST = ["c", "c#", "d", "d#", "e", "f", "f#", "g", "g#", "a", "a#", "b"]
+OCTAVES_LIST = range(3, 7)
+last_note = C3_NOTE
+
+for octave in OCTAVES_LIST:
+    for note in NOTES_LIST:
+        PIANO[str(int(octave)) + note] = last_note
+        last_note *= HALF_STEP_FACTOR
+gc.collect()
+
+#PIANO = {
+#    "4c": 261.626,
+#    "4c#": 277.183,
+#    "4d": 293.665,
+#    "4d#": 311.127,
+#    "4e": 329.628,
+#    "4f": 349.228,
+#    "4f#": 369.994,
+#    "4g": G5_NOTE / 2, # start
+#    "4g#": G5_NOTE * G_TO_GSHARP,
+#    "4a": 440,
+#    "4a#": 466.164,
+#    "4b": 493.883,
+#    "5c": 523.251,
+#    "5c#": 554.365,
+#    "5d": 587.330,
+#    "5d#": 622.254,
+#    "5e": 659.255,
+#    "5f": 698.456,
+#    "5f#": 739.989,
+#    "5g": G5_NOTE, # 
+#    "5g#": G5_NOTE * G_TO_GSHARP,
+#    "5a": G5_NOTE * G_TO_A,
+#    "5a#": G5_NOTE * G_TO_ASHARP,
+#    "5b": G5_NOTE * G_TO_B,
+#    "6c": G5_NOTE * G_TO_C,
+#    "6c#": G5_NOTE * G_TO_CSHARP,
+#    "6d": G5_NOTE * G_TO_D,
+#    "6d#": G5_NOTE * G_TO_DSHARP,
+#    "6e": G5_NOTE * G_TO_E,
+#    "6f": G5_NOTE * G_TO_F,
+#    "6f#": G5_NOTE * G_TO_FSHARP,
+#    "6g": G5_NOTE * 2,
+#    "6g#": 1661.22,
+#    "6a": 1760,
+#    "6a#": 1864.66,
+#    "6b": 1975.53,
+#    "7c": 2093,
+#    "7c#": 2217.46,
+#}
 
 
 def _parse_note(note: str, duration: int = 2, octave: int = 6) -> Tuple[str, float]:
@@ -105,59 +108,26 @@ def _parse_note(note: str, duration: int = 2, octave: int = 6) -> Tuple[str, flo
     piano_note = note_octave + piano_note
     return piano_note, note_duration
 
-
-def _get_wave(tune: str, octave: int) -> Tuple[List[int], float]:
-    """Returns the proper waveform to play the song along with the minimum
-    frequency in the song.
-    """
-    min_freq = 13000
-
-    for note in tune.split(","):
-        piano_note, _ = _parse_note(note, octave=octave)
-        if piano_note[-1] != "p" and PIANO[piano_note] < min_freq:
-            min_freq = PIANO[piano_note]
-    return sine.sine_wave(16000, min_freq), min_freq
-
-
-# pylint: disable-msg=too-many-arguments
-def _play_to_pin(
+def _play_to_stepper(
     tune: str,
-    base_tone: Union[pwmio.PWMOut, AudioOut],
-    min_freq: float,
+    motor,
     duration: int,
     octave: int,
     tempo: int,
 ) -> None:
-    """Using the prepared input send the notes to the pin"""
-    pwm = isinstance(base_tone, pwmio.PWMOut)
     for note in tune.split(","):
         piano_note, note_duration = _parse_note(note, duration, octave)
         if piano_note in PIANO:
-            if pwm:
-                base_tone.frequency = int(PIANO[piano_note])
-                base_tone.duty_cycle = 2 ** 15
-            else:
-                # AudioOut interface changed in CP 3.x
-                if sys.implementation.version[0] >= 3:
-                    pitch = int(PIANO[piano_note])
-                    sine_wave = sine.sine_wave(16000, pitch)
-                    sine_wave_sample = audiocore.RawSample(sine_wave)
-                    base_tone.play(sine_wave_sample, loop=True)
-                else:
-                    base_tone.frequency = int(16000 * (PIANO[piano_note] / min_freq))
-                    base_tone.play(loop=True)
+            motor.drive(PIANO[piano_note])
 
         time.sleep(4 / note_duration * 60 / tempo)
-        if pwm:
-            base_tone.duty_cycle = 0
-        else:
-            base_tone.stop()
+        motor.drive(0)
         time.sleep(0.02)
 
 
 # pylint: disable-msg=too-many-arguments
 def play(
-    pin,
+    motor,
     rtttl: str,
     octave: Optional[int] = None,
     duration: Optional[int] = None,
@@ -186,24 +156,5 @@ def play(
         tempo = 63
 
     base_tone = None
-    min_freq = 440
-    if AUDIOIO_AVAILABLE:
-        wave, min_freq = _get_wave(tune, octave)
-        try:
-            # AudioOut interface changed in CP 3.x; a waveform if now pass
-            # directly to .play(), generated for each note in _play_to_pin()
-            if sys.implementation.version[0] >= 3:
-                base_tone = audioio.AudioOut(pin)
-            else:
-                base_tone = audioio.AudioOut(pin, wave)
-        except ValueError:
-            # No DAC on the pin so use PWM.
-            pass
 
-    # Fall back to PWM
-    if not base_tone:
-        base_tone = pwmio.PWMOut(pin, duty_cycle=0, variable_frequency=True)
-
-    _play_to_pin(tune, base_tone, min_freq, duration, octave, tempo)
-
-    base_tone.deinit()
+    _play_to_stepper(tune, motor, duration, octave, tempo)
