@@ -3,16 +3,16 @@
 # SPDX-License-Identifier: MIT
 
 """
-`adafruit_rtttl`
+`adafruit_stepperrtttl`
 ====================================================
 
 Play notes to a digialio pin using ring tone text transfer language (rtttl).
 
-* Author(s): Scott Shawcroft
+* Author(s): Scott Shawcroft, Alec Delaney
 """
 
 __version__ = "0.0.0-auto.0"
-__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_RTTTL"
+__repo__ = "https://github.com/tekktrik/Adafruit_CircuitPython_StepperRTTTL"
 
 import sys
 import time
