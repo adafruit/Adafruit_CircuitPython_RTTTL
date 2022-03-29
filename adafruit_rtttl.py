@@ -135,7 +135,7 @@ def _play_to_pin(
         if piano_note in PIANO:
             if pwm:
                 base_tone.frequency = int(PIANO[piano_note])
-                base_tone.duty_cycle = 2 ** 15
+                base_tone.duty_cycle = 2**15
             else:
                 # AudioOut interface changed in CP 3.x
                 if sys.implementation.version[0] >= 3:
