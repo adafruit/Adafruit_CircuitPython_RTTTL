@@ -32,7 +32,7 @@ try:
     except ImportError:
         audiocore = audioio
 except ImportError as e:
-    if not WAVEFORM_AVAILABLE:
+    if AUDIOIO_AVAILABLE and not WAVEFORM_AVAILABLE:
         raise e
 
 try:
