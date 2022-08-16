@@ -11,7 +11,7 @@ Play notes to a digialio pin using ring tone text transfer language (rtttl).
 * Author(s): Scott Shawcroft
 """
 
-__version__ = "0.0.0-auto.0"
+__version__ = "0.0.0+auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_RTTTL"
 
 import sys
