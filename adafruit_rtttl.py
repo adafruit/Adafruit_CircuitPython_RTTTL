@@ -96,7 +96,7 @@ def _parse_note(note: str, duration: int = 2, octave: int = 6) -> Tuple[str, flo
     else:
         piano_note = note[0]
     if "." in note:
-        note_duration *= 1.5
+        note_duration /= 1.5
     if "#" in note:
         piano_note += "#"
     note_octave = str(octave)
