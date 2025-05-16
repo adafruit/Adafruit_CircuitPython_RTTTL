@@ -25,8 +25,9 @@
 
 # This is tested on the CircuitPlayground Express
 
-import digitalio
 import board
+import digitalio
+
 import adafruit_rtttl
 
 enable = digitalio.DigitalInOut(board.SPEAKER_ENABLE)
