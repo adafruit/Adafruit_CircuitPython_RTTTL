@@ -16,6 +16,7 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_RTTTL"
 
 import sys
 import time
+
 import pwmio
 
 AUDIOIO_AVAILABLE = False
@@ -36,7 +37,8 @@ except ImportError as e:
         raise e
 
 try:
-    from typing import Optional, Union, Tuple, List
+    from typing import List, Optional, Tuple, Union
+
     from audioio import AudioOut
 except ImportError:
     pass
@@ -136,16 +138,14 @@ def _play_to_pin(
             if pwm:
                 base_tone.frequency = int(PIANO[piano_note])
                 base_tone.duty_cycle = 2**15
+            elif sys.implementation.version[0] >= 3:
+                pitch = int(PIANO[piano_note])
+                sine_wave = sine.sine_wave(16000, pitch)
+                sine_wave_sample = audiocore.RawSample(sine_wave)
+                base_tone.play(sine_wave_sample, loop=True)
             else:
-                # AudioOut interface changed in CP 3.x
-                if sys.implementation.version[0] >= 3:
-                    pitch = int(PIANO[piano_note])
-                    sine_wave = sine.sine_wave(16000, pitch)
-                    sine_wave_sample = audiocore.RawSample(sine_wave)
-                    base_tone.play(sine_wave_sample, loop=True)
-                else:
-                    base_tone.frequency = int(16000 * (PIANO[piano_note] / min_freq))
-                    base_tone.play(loop=True)
+                base_tone.frequency = int(16000 * (PIANO[piano_note] / min_freq))
+                base_tone.play(loop=True)
 
         time.sleep(4 / note_duration * 60 / tempo)
         if pwm:
